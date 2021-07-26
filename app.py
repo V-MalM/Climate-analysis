@@ -50,12 +50,12 @@ def welcome():
         f"/api/v1.0/precipitation<br/>"
         f"/api/v1.0/stations<br/>"
         f"/api/v1.0/tobs<br/><br/>"
-        f"Use the following Routes to serach for min, avg, max temperatues for the state of Hawaii for a given start or start-end range.<br />\
+        f"Use the following Routes to serach for min, avg, max temperatues for all stations for a given start or start-end range.<br />\
             Make sure the date is in the yyyy-mm-dd format<br/><br/>"
         f"/api/v1.0/{date_12_months_back}<br/>"
         f"/api/v1.0/{date_12_months_back}/{recent_date}<br/><br/>"
 
-        f"Use the following Routes to view info for ALL stations for a given start or start-end range<br/><br/>"
+        f"Use the following Routes to view info for each indiviadual station for a given start or start-end range<br/><br/>"
         f"/api/v1.0/stations/{date_12_months_back}<br/>"
         f"/api/v1.0/stations/{date_12_months_back}/{recent_date}"
     )
