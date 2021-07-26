@@ -24,12 +24,14 @@ Measurement = Base.classes.measurement
 Station = Base.classes.station
 
 session = Session(engine)
-most_recent_date = session.query(func.max(Measurement.date)).first()
+oldest_date = session.query(Measurement.date).order_by(Measurement.date).first()
+oldest_date = oldest_date[0]
+oldest_date = dt.datetime.strptime(oldest_date, '%Y-%m-%d').date()
+
 most_recent_date = session.query(Measurement.date).order_by(Measurement.date.desc()).first()
 recent_date = most_recent_date[0]
 recent_date = dt.datetime.strptime(recent_date, '%Y-%m-%d').date()
 date_12_months_back = recent_date - dt.timedelta(days=365)
-date_12_months_back
 session.close()
 #################################################
 # Flask Setup
@@ -43,15 +45,19 @@ app = Flask(__name__)
 
 @app.route("/")
 def welcome():
-    """List all available api routes."""
     return (
         f"Available Routes:<br/>"
         f"/api/v1.0/precipitation<br/>"
         f"/api/v1.0/stations<br/>"
         f"/api/v1.0/tobs<br/><br/>"
-        f"Use the for following Routes to serach by date. Make sure the date is in the yyyy-mm-dd format<br/>"
+        f"Use the following Routes to serach for min, avg, max temperatues for the state of Hawaii for a given start or start-end range.<br />\
+            Make sure the date is in the yyyy-mm-dd format<br/><br/>"
         f"/api/v1.0/{date_12_months_back}<br/>"
-        f"/api/v1.0/{date_12_months_back}/{recent_date}"
+        f"/api/v1.0/{date_12_months_back}/{recent_date}<br/><br/>"
+
+        f"Use the following Routes to view info for ALL stations for a given start or start-end range<br/><br/>"
+        f"/api/v1.0/stations/{date_12_months_back}<br/>"
+        f"/api/v1.0/stations/{date_12_months_back}/{recent_date}"
     )
 
 
@@ -60,8 +66,7 @@ def precipitation():
     # Create our session (link) from Python to the DB
     session = Session(engine)
 
-    """Return a list of all dates and precipitation"""
-    # Query all passengers
+    # Return a list of all dates and precipitation
     results = session.query(Measurement.date,Measurement.prcp).\
     filter(Measurement.date >= date_12_months_back).\
     order_by(Measurement.date).all()
@@ -84,8 +89,7 @@ def stations():
     # Create our session (link) from Python to the DB
     session = Session(engine)
 
-    """Return a list of all stations names"""
-    # Query all passengers
+    # Return a list of all stations names
     results = session.query(Station.name).order_by(Station.name).all()
 
     session.close()
@@ -105,7 +109,7 @@ def tobs():
         order_by(func.count(Measurement.id).desc()).first()
     active_sation = active_sation[0]
 
-#   Query all passengers
+#   Query
     results = session.query(Measurement.date, Measurement.tobs).\
     filter(Measurement.station == active_sation).\
     filter(Measurement.date >= date_12_months_back).\
@@ -113,7 +117,7 @@ def tobs():
 
     session.close()
 
-#   Create a dictionary from the row data and append to a list of all_passengers
+#   Create a dictionary from the row data and append to a list
     all_dates_temps = []
     for date, tobs in results:
         dates_temps_dict = {}
@@ -130,31 +134,91 @@ def start_date(start_date):
             start_date = dt.datetime.strptime(start_date, '%Y-%m-%d').date()
             session = Session(engine)
             
+            if (start_date>= oldest_date and start_date<= recent_date):
+                #   Query
+                results = session.query(
+                    func.min(Measurement.tobs).label("TMin"), func.avg(Measurement.tobs).label("TAvg"),\
+                    func.max(Measurement.tobs).label("TMax")).\
+                    filter(Measurement.date >= start_date).all()    
+                    
+                session.close()
+                results_conv = list(np.ravel(results))
+                return jsonify(results_conv)
+            else:
+                return("We do not have information for that date")   
 
-        #   Query all passengers
-            results = session.query(Measurement.station, Station.name,\
-                func.min(Measurement.tobs).label("TMin"), func.avg(Measurement.tobs).label("TAvg"),\
-                func.max(Measurement.tobs).label("TMax")).\
-                filter(Measurement.station == Station.station).\
-                filter(Measurement.date >= start_date).\
-                group_by(Measurement.station).\
-                order_by(Station.name).all()    
-                
-            session.close()
+        except ValueError:
+            return("Make sure to enter date is in the yyyy-mm-dd format<br/>")   
+        except:
+            return("Make sure to enter date is in the yyyy-mm-dd format<br/>")    
+        else:
+            return("Make sure to enter date is in the yyyy-mm-dd format<br/>")  
+              
+          
+@app.route("/api/v1.0/<start_date>/<end_date>")
+def start_end_date(start_date,end_date):    
+    if (start_date != "" and end_date != ""):
+        try:
+            start_date = dt.datetime.strptime(start_date, '%Y-%m-%d').date()
+            end_date = dt.datetime.strptime(end_date, '%Y-%m-%d').date()
+            session = Session(engine)
+            
+            if (start_date>= oldest_date and start_date<= recent_date):
+            #   Query
+                results = session.query(
+                    func.min(Measurement.tobs).label("TMin"), func.avg(Measurement.tobs).label("TAvg"),\
+                    func.max(Measurement.tobs).label("TMax")).\
+                    filter(Measurement.date >= start_date).\
+                    filter(Measurement.date <= end_date).all()    
 
-        # # #   Create a dictionary from the row data and append to a list of all_passengers
-            all_dates_temps = []
-            for station, name, TMin, TAvg, TMax in results:
-                dates_temps_dict = {}
-                dates_temps_dict["StationID"] = station
-                dates_temps_dict["Station"] = name
-                dates_temps_dict["Min Temp"] = TMin
-                dates_temps_dict["Avg Temp"] = TAvg
-                dates_temps_dict["Max Temp"] = TMax
-                        
-                all_dates_temps.append(dates_temps_dict)
+                session.close()
 
-            return jsonify(all_dates_temps)
+                results_conv = list(np.ravel(results))
+                return jsonify(results_conv)
+            else:
+                return("We do not have information for that date range") 
+        except ValueError:
+            return("Make sure to enter date is in the yyyy-mm-dd format<br/>")   
+        except:
+            return("Make sure to enter date is in the yyyy-mm-dd format<br/>")    
+        else:
+            return("Make sure to enter date is in the yyyy-mm-dd format<br/>")       
+               
+
+@app.route("/api/v1.0/stations/<start_date>")
+def start_date_all_stations(start_date):    
+    if (start_date != ""):
+        try:
+            start_date = dt.datetime.strptime(start_date, '%Y-%m-%d').date()
+            session = Session(engine)
+            
+            if (start_date>= oldest_date and start_date<= recent_date):
+            #   Query
+                results = session.query(Measurement.station, Station.name,\
+                    func.min(Measurement.tobs).label("TMin"), func.avg(Measurement.tobs).label("TAvg"),\
+                    func.max(Measurement.tobs).label("TMax")).\
+                    filter(Measurement.station == Station.station).\
+                    filter(Measurement.date >= start_date).\
+                    group_by(Measurement.station).\
+                    order_by(Station.name).all()    
+                    
+                session.close()
+
+            # Create a dictionary from the row data and append to a list
+                all_dates_temps = []
+                for station, name, TMin, TAvg, TMax in results:
+                    dates_temps_dict = {}
+                    dates_temps_dict["StationID"] = station
+                    dates_temps_dict["Station"] = name
+                    dates_temps_dict["Min Temp"] = TMin
+                    dates_temps_dict["Avg Temp"] = TAvg
+                    dates_temps_dict["Max Temp"] = TMax
+                            
+                    all_dates_temps.append(dates_temps_dict)
+
+                return jsonify(all_dates_temps)
+            else:
+                return("We do not have information for that date")  
 
 
         except ValueError:
@@ -164,43 +228,45 @@ def start_date(start_date):
         else:
             return("Make sure to enter date is in the yyyy-mm-dd format<br/>")       
           
-        
+
     
 
-@app.route("/api/v1.0/<start_date>/<end_date>")
-def start_end_date(start_date,end_date):    
+@app.route("/api/v1.0/stations/<start_date>/<end_date>")
+def start_end_date_all_stations(start_date,end_date):    
     if (start_date != "" and end_date != ""):
         try:
             start_date = dt.datetime.strptime(start_date, '%Y-%m-%d').date()
             end_date = dt.datetime.strptime(end_date, '%Y-%m-%d').date()
             session = Session(engine)
             
+            if (start_date>= oldest_date and start_date<= recent_date):
+            #   Query
+                results = session.query(Measurement.station, Station.name,\
+                    func.min(Measurement.tobs).label("TMin"), func.avg(Measurement.tobs).label("TAvg"),\
+                    func.max(Measurement.tobs).label("TMax")).\
+                    filter(Measurement.station == Station.station).\
+                    filter(Measurement.date >= start_date).\
+                    filter(Measurement.date <= end_date).\
+                    group_by(Measurement.station).\
+                    order_by(Station.name).all()    
+                    
+                session.close()
 
-        #   Query all passengers
-            results = session.query(Measurement.station, Station.name,\
-                func.min(Measurement.tobs).label("TMin"), func.avg(Measurement.tobs).label("TAvg"),\
-                func.max(Measurement.tobs).label("TMax")).\
-                filter(Measurement.station == Station.station).\
-                filter(Measurement.date >= start_date).\
-                filter(Measurement.date <= end_date).\
-                group_by(Measurement.station).\
-                order_by(Station.name).all()    
-                
-            session.close()
+            #  Create a dictionary from the row data and append to a list
+                all_dates_temps = []
+                for station, name, TMin, TAvg, TMax in results:
+                    dates_temps_dict = {}
+                    dates_temps_dict["StationID"] = station
+                    dates_temps_dict["Station"] = name
+                    dates_temps_dict["Min Temp"] = TMin
+                    dates_temps_dict["Avg Temp"] = TAvg
+                    dates_temps_dict["Max Temp"] = TMax
+                            
+                    all_dates_temps.append(dates_temps_dict)
 
-        # # #   Create a dictionary from the row data and append to a list of all_passengers
-            all_dates_temps = []
-            for station, name, TMin, TAvg, TMax in results:
-                dates_temps_dict = {}
-                dates_temps_dict["StationID"] = station
-                dates_temps_dict["Station"] = name
-                dates_temps_dict["Min Temp"] = TMin
-                dates_temps_dict["Avg Temp"] = TAvg
-                dates_temps_dict["Max Temp"] = TMax
-                        
-                all_dates_temps.append(dates_temps_dict)
-
-            return jsonify(all_dates_temps)
+                return jsonify(all_dates_temps)
+            else:
+                return("We do not have information for that date range")      
 
 
         except ValueError:
