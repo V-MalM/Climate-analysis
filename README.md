@@ -3,6 +3,9 @@
 ## Project Description 
 Climate analysis on Honolulu, Hawaii area. The following outlines the process.
 
+## Please download the repository to execute all the files successfully
+* Jupyter notebook file [Honolulu_climate_analysis.ipynb](Honolulu_climate_analysis.ipynb) contains the analysis
+
 ## Step 1 - Climate Analysis and Exploration
 
 Used Python and SQLAlchemy to do basic climate analysis and data exploration of climate database. All of the following analysis was completed by using SQLAlchemy ORM queries, Pandas, and Matplotlib.
@@ -111,6 +114,66 @@ After completing initial analysis, designed a Flask API based on the queries tha
   * When given the start and the end date, calculates the `TMIN`, `TAVG`, and `TMAX` for dates between the start and end date inclusive.  
   <table width="50%"><tr><td><img src="Images/route7.jpg"></td></tr></table> 
 
+### Temperature Analysis I
+
+* Hawaii is reputed to enjoy mild weather all year. Is there a meaningful difference between the temperature in, for example, June and December?
+
+* Identifid the average temperature for the months June and December at all stations across all available years in the dataset.
+
+* Visualization 
+
+  ![scatter](Plot_Images/june_dec_temp_scatter.jpeg)
+
+  ![hist](Plot_Images/june_dec_temp_hist.jpeg)
+  - *The scatter plot and histogram suggest that the month of June seems to have higher temperature compared to December.* 
+
+* Used the t-test to determine whether the difference in the means, if any, is statistically significant.
+
+  - *Used unpaired independent T-test with unequal variance, because sample sizes for the months of June and December are unequal.*
+  - *There are 1700 samples for June and 1517 samples for December, and so cannot be paired in a before-after sense.*
+  <table width="50%"><tr><td><img src="Images/ttest.jpg"></td></tr></table> 
+## Analysis
+* The p-value in this case is 4.193529835915755e-187, which is far less than the standard thresholds of 0.05 or 0.01. 
+* Based on the p-value, it can be concluded that there is a statistically significant difference between the June temperature and the December temperature.
+* June has higher temperatures than December.  
+
+### Temperature Analysis II
+
+* To predict temperatures from August first to August seventh of last year. Using this historical data in the dataset to find out what the temperature has previously looked like.
+
+* Used function called `calc_temps` that will accept a start date and end date in the format `%Y-%m-%d`. The function will return the minimum, average, and maximum temperatures for that range of dates.
+
+* Used the `calc_temps` function to calculate the min, avg, and max temperatures for trip dates using the matching dates from a previous year (i.e., "2017-08-01").
+
+* Plotted the min, avg, and max temperature as a bar chart.
+
+  * Used "Trip Avg Temp" as the title.
+
+  * Used the average temperature as the bar height (y value).
+
+  * Used the peak-to-peak (TMAX-TMIN) value as the y error bar (YERR).
+
+    ![temperature](Plot_Images/trip_avg_temp_bar.jpeg)
+
+### Daily Rainfall Average
+
+* Now that we have an idea of the temperature lets check to see what the rainfall has been for the same trip dates.
+
+* Calculated the rainfall per weather station using the previous year's matching dates.
+
+  * Sorted this in descending order by precipitation amount and list the station, name, latitude, longitude, and elevation.
+  <table width="50%"><tr><td><img src="Images/trip_precip.jpg"></td></tr></table> 
+
+
+### Daily Temperature Normals
+
+* Calculated the daily normals for the duration of your trip. 
+
+* Used Pandas to plot an area plot (`stacked=False`) for the daily normals.
+
+  ![daily-normals](Plot_Images/daily_normals_temp.jpeg)
+
+* Closed out session at the end.
 
 
 
