@@ -54,7 +54,7 @@ Used Python and SQLAlchemy to do basic climate analysis and data exploration of 
   <table width="20%"><tr><td><img src="Images/active_station_id.jpg"></td></tr></table>
 
   * Queried the last 12 months of temperature observation data for this station.
-  <table width="20%"><tr><td><img src="Images/active_station_temps.jpg"></td></tr></table>
+  <table width="200px"><tr><td><img src="Images/active_station_temps.jpg"></td></tr></table>
   
 
   * Plotted the results as a histogram with `bins=12`.
