@@ -26,13 +26,13 @@ Used Python and SQLAlchemy to do basic climate analysis and data exploration of 
 
 * Loaded the results into a Pandas DataFrame and set the index to the date column.
 
-* Sort the DataFrame values by `date`.
+* Sorted the DataFrame values by `date`.
 
 * Plotted the results using the DataFrame `plot` method.
 
   ![precipitation](Plot_Images/daily_precp.jpeg)
 
-* Use Pandas to print the summary statistics for the precipitation data.
+* Used Pandas to print the summary statistics for the precipitation data.
   <table width="50%"><tr><td><img src="Images/precp_summ_stat.jpg"></td></tr></table>
 
 ### Station Analysis
@@ -45,13 +45,13 @@ Used Python and SQLAlchemy to do basic climate analysis and data exploration of 
   <table width="50%"><tr><td><img src="Images/station_obs_cnt.jpg"></td></tr></table>
 
   * Using the most active station id, calculated the lowest, highest, and average temperature.
-  <table width="50%"><tr><td><img src="Images/active_station_det.jpg"></td></tr></table>
+  <table width="30%"><tr><td><img src="Images/active_station_det.jpg"></td></tr></table>
   
 
 * Designed a query to retrieve the last 12 months of temperature observation data (TOBS).
 
   * Filtered by the station with the highest number of observations.
-  <table width="50%"><tr><td><img src="Images/active_station_id.jpg"></td></tr></table>
+  <table width="30%"><tr><td><img src="Images/active_station_id.jpg"></td></tr></table>
 
   * Queried the last 12 months of temperature observation data for this station.
   <table width="30%"><tr><td><img src="Images/active_station_temps.jpg"></td></tr></table>
