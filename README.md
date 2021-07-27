@@ -119,7 +119,7 @@ After completing initial analysis, designed a Flask API based on the queries tha
 * Hawaii is reputed to enjoy mild weather all year. Is there a meaningful difference between the temperature in, for example, June and December?
 
 * Identifid the average temperature for the months June and December at all stations across all available years in the dataset.
-
+  <table width="20%"><tr><td><img src="Images/avg_temp_jun_dec.jpg" width="300"></td></tr></table>
 * Visualization 
 
   ![scatter](Plot_Images/june_dec_temp_scatter.jpeg)
@@ -130,6 +130,7 @@ After completing initial analysis, designed a Flask API based on the queries tha
 * Used the t-test to determine whether the difference in the means, if any, is statistically significant.
 
   - *Used unpaired independent T-test with unequal variance, because sample sizes for the months of June and December are unequal.*
+    <table width="20%"><tr><td><img src="Images/no_of_recs.jpg" width="300"></td></tr></table>
   - *There are 1700 samples for June and 1517 samples for December, and so cannot be paired in a before-after sense.*
   <table width="50%"><tr><td><img src="Images/ttest.jpg"></td></tr></table> 
 ## Analysis
