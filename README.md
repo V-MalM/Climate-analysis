@@ -15,8 +15,6 @@ Used Python and SQLAlchemy to do basic climate analysis and data exploration of 
 
 * Linked Python to the database by creating an SQLAlchemy session.
 
-* Closed out session at the end of the notebook.
-
 ### Precipitation Analysis
 
 * Started by finding the most recent date in the data set.
@@ -32,4 +30,31 @@ Used Python and SQLAlchemy to do basic climate analysis and data exploration of 
   ![precipitation](Plot_Images/daily_precp.jpeg)
 
 * Use Pandas to print the summary statistics for the precipitation data.
-  ![precipitation](Images/precp_summ_stat.jpg)
+  <table width="50%"><tr><td><img src="Images/precp_summ_stat.jpg"></td></tr></table>
+
+### Station Analysis
+
+* Designed a query to calculate the total number of stations in the dataset.
+
+* Designed a query to find the most active stations (i.e. which stations have the most rows?).
+
+  * List the stations and observation counts in descending order.
+  <table width="50%"><tr><td><img src="Images/station_obs_cnt.jpg"></td></tr></table>
+
+  * Using the most active station id, calculated the lowest, highest, and average temperature.
+  <table width="50%"><tr><td><img src="Images/active_station_det.jpg"></td></tr></table>
+  
+
+* Designed a query to retrieve the last 12 months of temperature observation data (TOBS).
+
+  * Filtered by the station with the highest number of observations.
+  <table width="50%"><tr><td><img src="Images/active_station_id.jpg"></td></tr></table>
+
+  * Queried the last 12 months of temperature observation data for this station.
+  <table width="30%"><tr><td><img src="Images/active_station_temps.jpg"></td></tr></table>
+  
+
+  * Plotted the results as a histogram with `bins=12`.
+
+    ![station-histogram](Plot_Images/tobs_hist.jpeg)
+
