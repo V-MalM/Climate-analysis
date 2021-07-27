@@ -58,3 +58,17 @@ Used Python and SQLAlchemy to do basic climate analysis and data exploration of 
 
     ![station-histogram](Plot_Images/tobs_hist.jpeg)
 
+## Step 2 - Climate App
+
+After completing initial analysis, designed a Flask API based on the queries that have been developed.
+
+* Used Flask to create routes.
+* Developed app  [flask_app](app.py) that contains funtions to create and execute the flask app and display jasonified routes. 
+<table width="80%"><tr><td><img src="Images/flask_cmd.jpg"></td></tr></table>
+
+### Routes
+
+<table width="50%"><tr><td><img src="Images/flask_routes.jpg"></td></tr></table>
+
+
+
