@@ -69,6 +69,7 @@ def precipitation():
     # Return a list of all dates and precipitation
     results = session.query(Measurement.date,Measurement.prcp).\
     filter(Measurement.date >= date_12_months_back).\
+    filter(Measurement.prcp != None).\
     order_by(Measurement.date).all()
 
     session.close()
@@ -163,20 +164,18 @@ def start_end_date(start_date,end_date):
             end_date = dt.datetime.strptime(end_date, '%Y-%m-%d').date()
             session = Session(engine)
             
-            if (start_date>= oldest_date and start_date<= recent_date):
-            #   Query
-                results = session.query(
-                    func.min(Measurement.tobs).label("TMin"), func.avg(Measurement.tobs).label("TAvg"),\
-                    func.max(Measurement.tobs).label("TMax")).\
-                    filter(Measurement.date >= start_date).\
-                    filter(Measurement.date <= end_date).all()    
+        #   Query
+            results = session.query(
+                func.min(Measurement.tobs).label("TMin"), func.avg(Measurement.tobs).label("TAvg"),\
+                func.max(Measurement.tobs).label("TMax")).\
+                filter(Measurement.date >= start_date).\
+                filter(Measurement.date <= end_date).all()    
 
-                session.close()
+            session.close()
 
-                results_conv = list(np.ravel(results))
-                return jsonify(results_conv)
-            else:
-                return("We do not have information for that date range") 
+            results_conv = list(np.ravel(results))
+            return jsonify(results_conv)
+
         except ValueError:
             return("Make sure to enter date is in the yyyy-mm-dd format<br/>")   
         except:
@@ -239,34 +238,33 @@ def start_end_date_all_stations(start_date,end_date):
             end_date = dt.datetime.strptime(end_date, '%Y-%m-%d').date()
             session = Session(engine)
             
-            if (start_date>= oldest_date and start_date<= recent_date):
-            #   Query
-                results = session.query(Measurement.station, Station.name,\
-                    func.min(Measurement.tobs).label("TMin"), func.avg(Measurement.tobs).label("TAvg"),\
-                    func.max(Measurement.tobs).label("TMax")).\
-                    filter(Measurement.station == Station.station).\
-                    filter(Measurement.date >= start_date).\
-                    filter(Measurement.date <= end_date).\
-                    group_by(Measurement.station).\
-                    order_by(Station.name).all()    
+            
+        #   Query
+            results = session.query(Measurement.station, Station.name,\
+                func.min(Measurement.tobs).label("TMin"), func.avg(Measurement.tobs).label("TAvg"),\
+                func.max(Measurement.tobs).label("TMax")).\
+                filter(Measurement.station == Station.station).\
+                filter(Measurement.date >= start_date).\
+                filter(Measurement.date <= end_date).\
+                group_by(Measurement.station).\
+                order_by(Station.name).all()    
                     
-                session.close()
+            session.close()
 
-            #  Create a dictionary from the row data and append to a list
-                all_dates_temps = []
-                for station, name, TMin, TAvg, TMax in results:
-                    dates_temps_dict = {}
-                    dates_temps_dict["StationID"] = station
-                    dates_temps_dict["Station"] = name
-                    dates_temps_dict["Min Temp"] = TMin
-                    dates_temps_dict["Avg Temp"] = TAvg
-                    dates_temps_dict["Max Temp"] = TMax
+        #  Create a dictionary from the row data and append to a list
+            all_dates_temps = []
+            for station, name, TMin, TAvg, TMax in results:
+                dates_temps_dict = {}
+                dates_temps_dict["StationID"] = station
+                dates_temps_dict["Station"] = name
+                dates_temps_dict["Min Temp"] = TMin
+                dates_temps_dict["Avg Temp"] = TAvg
+                dates_temps_dict["Max Temp"] = TMax
                             
-                    all_dates_temps.append(dates_temps_dict)
+                all_dates_temps.append(dates_temps_dict)
 
-                return jsonify(all_dates_temps)
-            else:
-                return("We do not have information for that date range")      
+            return jsonify(all_dates_temps)
+               
 
 
         except ValueError:

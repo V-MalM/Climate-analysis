@@ -67,8 +67,50 @@ After completing initial analysis, designed a Flask API based on the queries tha
 <table width="80%"><tr><td><img src="Images/flask_cmd.jpg"></td></tr></table>
 
 ### Routes
+* `/`
 
-<table width="50%"><tr><td><img src="Images/flask_routes.jpg"></td></tr></table>
+  * Home page.
+
+  * List all routes that are available.
+  <table width="50%"><tr><td><img src="Images/flask_routes.jpg"></td></tr></table>
+
+* `/api/v1.0/precipitation`
+
+  * Convert the query results to a dictionary using `date` as the key and `prcp` as the value.
+
+  * Return the JSON representation of your dictionary.
+
+  <table width="50%"><tr><td><img src="Images/route1.jpg"></td></tr></table> 
+
+* `/api/v1.0/stations`
+
+  * Return a JSON list of stations from the dataset.
+
+  <table width="50%"><tr><td><img src="Images/route2.jpg"></td></tr></table>     
+
+* `/api/v1.0/tobs`
+  * Query the dates and temperature observations of the most active station for the last year of data.
+
+  * Return a JSON list of temperature observations (TOBS) for the previous year.
+  <table width="50%"><tr><td><img src="Images/route3.jpg"></td></tr></table> 
+
+* `/api/v1.0/<start>` and `/api/v1.0/<start>/<end>`
+
+  * Return a JSON list of the minimum temperature, the average temperature, and the max temperature for a given start or start-end range.
+
+  * When given the start only, calculate `TMIN`, `TAVG`, and `TMAX` for all dates greater than and equal to the start date.
+  <table width="50%"><tr><td><img src="Images/route4.jpg"></td></tr></table> 
+
+  * When given the start and the end date, calculate the `TMIN`, `TAVG`, and `TMAX` for dates between the start and end date inclusive.  
+  <table width="50%"><tr><td><img src="Images/route5.jpg"></td></tr></table> 
+
+* Created 2 ADDITIONAL routes that will display the `TMIN`, `TAVG`, and `TMAX` for dates between the start and end date inclusive, for each INDIVIDUAL STATION.
+  * When given the start only, calculates `TMIN`, `TAVG`, and `TMAX` for all dates greater than and equal to the start date.
+  <table width="50%"><tr><td><img src="Images/route6.jpg"></td></tr></table> 
+
+  * When given the start and the end date, calculates the `TMIN`, `TAVG`, and `TMAX` for dates between the start and end date inclusive.  
+  <table width="50%"><tr><td><img src="Images/route7.jpg"></td></tr></table> 
+
 
 
 
