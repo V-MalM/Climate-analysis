@@ -45,16 +45,16 @@ Used Python and SQLAlchemy to do basic climate analysis and data exploration of 
   <table width="50%"><tr><td><img src="Images/station_obs_cnt.jpg"></td></tr></table>
 
   * Using the most active station id, calculated the lowest, highest, and average temperature.
-  <table width="30%"><tr><td><img src="Images/active_station_det.jpg"></td></tr></table>
+  <table width="30%"><tr><td><img src="Images/active_station_det.jpg" width="400"></td></tr></table>
   
 
 * Designed a query to retrieve the last 12 months of temperature observation data (TOBS).
 
   * Filtered by the station with the highest number of observations.
-  <table width="20%"><tr><td><img src="Images/active_station_id.jpg"></td></tr></table>
+  <table width="20%"><tr><td><img src="Images/active_station_id.jpg" width="400"></td></tr></table>
 
   * Queried the last 12 months of temperature observation data for this station.
-  <table width="200px"><tr><td><img src="Images/active_station_temps.jpg"></td></tr></table>
+  <table width="20%"><tr><td><img src="Images/active_station_temps.jpg" width="300"></td></tr></table>
   
 
   * Plotted the results as a histogram with `bins=12`.
